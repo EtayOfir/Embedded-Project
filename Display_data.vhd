@@ -60,7 +60,7 @@ begin
                       data <= DISPLAY_ARMED;     
                   when ST_ALARM =>
                       data <= DISPLAY_FAILURE;   
-                  when ST_CODE =>
+                  when others =>
                       data <= DISPLAY_CONSTANT;
     end case;
 end if;
