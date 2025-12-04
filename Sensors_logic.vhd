@@ -2,7 +2,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 
 -- ============================================================
--- Project   : Home Alarm System ? Sensors Logic
+-- Project   : Home Alarm System – Sensors Logic
 -- File Name : Sensors_logic.vhd
 -- Author    : Etay Ofir
 -- ID        : 203844261
@@ -17,7 +17,7 @@ use ieee.std_logic_1164.all;
 -- Notes:
 -- * Asynchronous reset.
 -- * Clean signal requires 3 consecutive clock cycles of HIGH.
--- * Output 'detected' = 1 if ? 2 sensors are active.
+-- * Output 'detected' = 1 if ≥ 2 sensors are active.
 -- ============================================================
 
 entity Sensors_logic is
