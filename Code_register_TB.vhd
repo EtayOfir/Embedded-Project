@@ -15,8 +15,36 @@ architecture sim of Code_register_TB is
     signal code_match  : std_logic;
     signal code_vector : std_logic_vector(N-1 downto 0);
 
+    -------------------------------------------------------------------------
+    -- Convert std_logic_vector ? string
+    -------------------------------------------------------------------------
+    function slv_to_string(slv : std_logic_vector) return string is
+        variable result : string(1 to slv'length);
+        variable idx    : integer := 1;
+    begin
+        for i in slv'range loop
+            result(idx) := std_logic'image(slv(i))(2); -- gets '0', '1', etc.
+            idx := idx + 1;
+        end loop;
+        return result;
+    end function;
+
+    -------------------------------------------------------------------------
+    -- Reverse a std_logic_vector for printing (to match your input order)
+    -------------------------------------------------------------------------
+    function reverse_slv(slv : std_logic_vector) return std_logic_vector is
+        variable r : std_logic_vector(slv'range);
+    begin
+        for i in slv'range loop
+            r(i) := slv(slv'left + slv'right - i);
+        end loop;
+        return r;
+    end function;
+
 begin
-    -- Instantiate the Unit Under Test (UUT)
+    -------------------------------------------------------------------------
+    -- Instantiate UUT
+    -------------------------------------------------------------------------
     UUT: entity work.Code_register
         port map(
             clk => clk,
@@ -28,7 +56,9 @@ begin
             code_vector => code_vector
         );
 
-    -- Clock generation: 10 ns period
+    -------------------------------------------------------------------------
+    -- Clock: 10 ns period
+    -------------------------------------------------------------------------
     clk_process : process
     begin
         loop
@@ -39,10 +69,13 @@ begin
         end loop;
     end process;
 
+    -------------------------------------------------------------------------
     -- Test stimulus
+    -------------------------------------------------------------------------
     stim_proc: process
-        -- Test sequence: first 8 bits correct (00000000), then 8 bits wrong (11110000)
-        variable test_seq : std_logic_vector(15 downto 0) := "0000000011110000";
+        -- First 8 bits: 00000000  (correct)
+        -- Next  8 bits: 11110000  (wrong)
+        variable test_seq : std_logic_vector(15 downto 0) := "1111000000000000";
     begin
         -- Reset
         rst <= '1';
@@ -50,18 +83,20 @@ begin
         rst <= '0';
         wait for 10 ns;
 
-        report "Starting test sequence: first wrong, then correct..." severity note;
+        report "Starting test sequence: first correct, then wrong..." severity note;
 
         for i in 0 to 15 loop
             bit_in <= test_seq(i);
-            valid <= '1';
+            valid  <= '1';
             wait until rising_edge(clk);
-            valid <= '0';
+            valid  <= '0';
             wait until rising_edge(clk);
 
             if code_ready = '1' then
                 report "---------------------------------------------";
-                report "Code ready! Current vector = " & std_logic_vector'image(code_vector);
+                report "Code ready! Current vector = "
+                       & slv_to_string(reverse_slv(code_vector));
+
                 if code_match = '1' then
                     report " Code MATCHED!" severity note;
                 else
