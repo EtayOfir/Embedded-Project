@@ -1,6 +1,26 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
+-- ============================================================
+-- Project   : Home Alarm System ? Code Register Testbench
+-- File Name : Code_register_TB.vhd
+-- Author    : Etay Ofir and Yuval Shahar
+-- ID        : 203844261 , 209455112
+-- Created   : 28/11/2025
+--
+-- Description:
+-- Testbench for the Code_register module. Feeds serial input bits,
+-- detects when a full code is received, and checks match status.
+--
+-- Notes:
+-- * Pure simulation (non-synthesizable).
+-- * Clock = 10 ns period.
+-- * Asynchronous reset at start.
+-- * Test sequence: 8 correct bits, then 8 incorrect bits.
+-- * 'valid' pulses for each bit.
+-- * Prints code_vector when code_ready = 1.
+-- ============================================================
+
 entity Code_register_TB is
 end Code_register_TB;
 

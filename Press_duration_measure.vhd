@@ -4,8 +4,8 @@ use ieee.std_logic_1164.all;
 -- ============================================================
 -- Project   : Home Alarm System ? Press Duration Measure
 -- File Name : Press_duration_measure.vhd
--- Author    : Etay Ofir
--- ID        : 203844261
+-- Author    : Etay Ofir and Yuval Shahar
+-- ID        : 203844261 , 209455112
 -- Created   : 24/11/2025
 --
 -- Description:

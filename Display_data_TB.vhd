@@ -2,6 +2,36 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
+-- ============================================================
+-- Project   : Home Alarm System ? Display Data Testbench
+-- File Name : Display_data_TB.vhd
+-- Author    : Etay Ofir and Yuval Shahar
+-- ID        : 203844261 , 209455112
+-- Created   : 28/11/2025
+--
+-- Description:
+-- Testbench for the Display_data module. Verifies correct display
+-- output for all system states, attempts handling, alarm behavior,
+-- and reset functionality. Drives state_code and attempt inputs
+-- and checks that the data bus matches expected patterns.
+--
+-- Notes:
+-- * Pure simulation (non-synthesizable TB).
+-- * Clock period = 10 ns.
+-- * Asynchronous reset tested at beginning and during alarm.
+-- * Validates:
+--     - Armed state display
+--     - Alarm activation / persistence through reset
+--     - Attempt display for values 1?7
+--     - Successful code display
+--     - Final reset ? data = 'Z'
+-- * Uses assert/report for automatic pass/fail messages.
+--
+-- Ports under test:
+--   clk, rst, attempt, state_code ? inputs to DUT
+--   data ? 8-bit visual output from DUT
+-- ============================================================
+
 entity Display_data_TB is
 end Display_data_TB;
 
@@ -22,13 +52,12 @@ architecture rtl of Display_data_TB is
 begin
     -- Instantiate DUT
     DUT: entity work.Display_data
-        generic map(N_bit => 3)
         port map(
-            clk => clk,
-            rst => rst,
-            attempt => attempt,
+            clk        => clk,
+            rst        => rst,
+            attempt    => attempt,
             state_code => state_code,
-            data => data
+            data       => data
         );
 
     -- Clock generation
@@ -67,7 +96,7 @@ begin
             report "ERROR: Alarm state mismatch!" severity error;
         report "Alarm activated OK.";
 
-        -- Try reset while alarm is active ? should not clear alarm
+        -- Reset while alarm active ? should NOT clear alarm
         rst <= '1';
         wait for clk_period;
         rst <= '0';
@@ -76,28 +105,33 @@ begin
             report "ERROR: Alarm incorrectly reset!" severity error;
         report "Alarm correctly remained active after reset.";
 
-        -- Display 7 failed attempts (alarm remains)
+        -- Display attempts (7 attempts)
         for i in 1 to 7 loop
-            attempt <= std_logic_vector(to_unsigned(i, attempt'length));
+            attempt    <= std_logic_vector(to_unsigned(i, attempt'length));
             state_code <= 4;  -- Display attempts
             wait for clk_period;
+
             assert data(3 downto 0) = std_logic_vector(to_unsigned(i,4))
-                report "ERROR: Attempt display mismatch for attempt " & integer'image(i)
+                report "ERROR: Attempt display mismatch for attempt " &
+                       integer'image(i)
                 severity error;
-            report "Attempt " & integer'image(i) & " displayed OK: data=" & to_hstring(data);
+
+            report "Attempt " & integer'image(i) &
+                   " displayed OK: data=" &
+                   integer'image(to_integer(unsigned(data)));
         end loop;
 
-        -- Successful code entered ? alarm stops
+        -- Successful code entered ? alarm clears
         state_code <= 3;
         wait for clk_period;
         assert data = DISPLAY_SUCCESS
             report "ERROR: Success state mismatch!" severity error;
         report "Successful code entered OK. Alarm cleared.";
 
-        -- Final reset (no alarm) ? data should go to Z
+        -- Final reset ? data should go Z
         rst <= '1';
         wait for clk_period;
-	    assert data = (7 downto 0 => 'Z')
+        assert data = (7 downto 0 => 'Z')
             report "ERROR: Data did not go to Z on final reset!" severity error;
         report "Final reset OK.";
 
