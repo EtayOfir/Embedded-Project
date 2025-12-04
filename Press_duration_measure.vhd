@@ -2,7 +2,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 
 -- ============================================================
--- Project   : Home Alarm System ? Press Duration Measure
+-- Project   : Home Alarm System – Press Duration Measure
 -- File Name : Press_duration_measure.vhd
 -- Author    : Etay Ofir
 -- ID        : 203844261
