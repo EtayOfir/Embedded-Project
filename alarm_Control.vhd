@@ -58,7 +58,7 @@ begin
             state_code_int <= (others => '0');
         elsif rising_edge(clk) then
             current_state <= next_state;
-            attempts_int <= attempts_next;  -- only here
+            attempts_int <= attempts_next;  
         end if;
     end process;
 
@@ -75,6 +75,7 @@ begin
         next_state <= current_state;
         attempts_next <= attempts_int; -- default: no change
 
+        -- State code representation
         case current_state is
             when DISARMED =>
                 system_armed <= '0';
